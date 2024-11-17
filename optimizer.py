@@ -6,9 +6,9 @@ import cv2
 from bayes_opt import BayesianOptimization, UtilityFunction
 from sklearn.gaussian_process.kernels import Matern
 
-def optimize_nfeatures(query_image, query_filename, test_images, preprocess_image_base):
+def optimize_nfeatures(query_image, query_filename, test_images, estimator, preprocess_img, filter_outlier, fixed_nf):
     def objective(nfeatures):
-        matches_info = find_matches(query_image, query_filename, test_images, nfeatures, estimator=cv2.USAC_MAGSAC, preprocess_image=preprocess_image_base)
+        matches_info = find_matches(query_image, query_filename, test_images, nfeatures, estimator, preprocess_img, filter_outlier, fixed_nf)
         if matches_info and len(matches_info[0]) > 0:
             # NOTE: matches_info[0][0] = (query_filename, test_filename, inliers_count, nfeatures, total matches)
             _, _, inliers_count, _, total_matches = matches_info[0][0]
@@ -19,7 +19,7 @@ def optimize_nfeatures(query_image, query_filename, test_images, preprocess_imag
 
     optimizer = BayesianOptimization(
         f=objective,
-        pbounds={"nfeatures": (500, 100000)}, #you could lessen the max nfeatures here instead of 10,000
+        pbounds={"nfeatures": (500, 100000)},
         random_state=1,
         verbose=0
     )
