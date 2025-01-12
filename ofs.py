@@ -1,5 +1,4 @@
 # OFS: ORB + FLANN + MAGSAC++
-# For testing purposes
 
 import cv2
 import numpy as np
@@ -22,43 +21,32 @@ def find_matches(
         nfeatures,
         estimator,
         preprocess_image,
-        filter_outlier,
-        fixed_nf
+        filter_outlier=False
         ):
-    
-    #synthetic noisezz
-    # Generate Gaussian noise
-    # noise = np.random.normal(0.001, 1, query_image.shape).astype(np.uint8)
-    # # Add the noise to the original image
-    # query_image = cv2.add(query_image, noise)
-    # query_image= cv2.GaussianBlur(query_image, (5, 5), 0)
-    # beta = max(-255, min(255, -5))
-    # # Adjust brightness
-    # query_image = cv2.convertScaleAbs(query_image, alpha=1, beta=beta)
-    
-
     query_image_original =  query_image
 
     # Array to store the final matches that will be RETURNED by this function
     matches_info = []
+
+    if(preprocess_image == "estacio_laurente"):
+        # resizing img1
+        scale_percent = 100
+        width = int(query_image.shape[1] * scale_percent / 100)
+        height = int(query_image.shape[0] * scale_percent / 100)
+        dim = (width, height)
+        query_image = cv2.resize(query_image, dim, interpolation = cv2.INTER_AREA)
     
     # OBJ 1 - Preprocess query image
     query_image = preprocess_image(query_image)
-    # ORB instantiation
-    orb = None
-    if (filter_outlier==True and fixed_nf==False) or (filter_outlier==False and fixed_nf==False): 
-        #indication that it is for ORFLANSAC
-        orb = cv2.ORB_create(nfeatures=int(nfeatures), scoreType=cv2.ORB_HARRIS_SCORE, fastThreshold=20, edgeThreshold=10)
-    elif (filter_outlier==False and fixed_nf==True) or (fixed_nf==True and filter_outlier==True): 
-        #indication that it is for Est-Lau ORB
-        orb = cv2.ORB_create(nfeatures=int(nfeatures), scoreType=1)
 
+    # ORB instantiation
+    orb = cv2.ORB_create(nfeatures=int(nfeatures), scoreType=cv2.ORB_HARRIS_SCORE, fastThreshold=20, edgeThreshold=10)
     kp_query, des_query = orb.detectAndCompute(query_image, None)
     
     # FLANN matcher instantiation
     FLANN_INDEX_LSH = 6
     index_params = dict(algorithm=FLANN_INDEX_LSH, table_number=6, key_size=12, multi_probe_level=1)
-    search_params = dict(checks=50)
+    search_params = dict(checks=500)
     flann = cv2.FlannBasedMatcher(index_params, search_params)
 
     # Array to save the comparison between query and test images
@@ -69,6 +57,12 @@ def find_matches(
         test_image_original = test_image
 
         if(preprocess_image == "estacio_laurente"):
+            #resizing img2
+            scale_percent = 100
+            width = int(test_image.shape[1] * scale_percent / 100)
+            height = int(test_image.shape[0] * scale_percent / 100)
+            dim = (width, height)
+            test_image = cv2.resize(test_image, dim, interpolation = cv2.INTER_AREA)
             test_image = cv2.resize(test_image, (query_image.shape[1], query_image.shape[0]))
 
         # OBJ 1 - Preprocess test image
@@ -76,7 +70,7 @@ def find_matches(
         
         kp_test, des_test = orb.detectAndCompute(test_image, None)
         matches = flann.knnMatch(des_query, des_test, k=2)
-
+        
         # Lowe's ratio test
         good_matches = []
         for match in matches:
@@ -89,14 +83,13 @@ def find_matches(
                 # print("m.distance/n.distance: ", m.distance/n.distance)
                 if m.distance/n.distance <= 0.75: # 25% closer points are considered as good matches
                     good_matches.append(m)
-        
+
         # If filtered matches are at least greater than 10, then use MAGSAC++ to get inliers (or accurate matches)
         if len(good_matches) > 10:
             inlier_matches=[]
 
             if filter_outlier==False:
                 inlier_matches = good_matches
-                good_matches = matches
             else:    
                 # Convert keypoints to numpy arrays
                 src_pts = np.float32([kp_query[m.queryIdx].pt for m in good_matches]).reshape(-1, 1, 2)
@@ -121,8 +114,9 @@ def find_matches(
                     # If it is an inlier, append the corresponding match to the inlier_matches list
                     inlier_matches.append(good_matches[i])
             '''
-            # Pre-defined threshold for min. number of inliers to accept as a match: x
-            if len(inlier_matches) > 4:
+
+            # Pre-defined threshold for min. number of inliers to accept as a match: 30
+            if len(inlier_matches) > 10:
                 # These are the final lists of matches and matches data to be returned
                 matches_info.append((
                     query_filename, 

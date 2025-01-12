@@ -1,16 +1,13 @@
 from optimizer import optimize_nfeatures
 from ofs import find_matches
 from fileio import visualize_and_save_matches
-from preprocess import preprocess_image, preprocess_image_estacio_laurente, preprocess_none
+from preprocess import preprocess_image, preprocess_image_estacio_laurente
 import cv2
-import orflansac
 
 def preprocess_image_method(method_name='default'):
     match method_name:
         case "estacio_laurente":
             return preprocess_image_estacio_laurente
-        case "none":
-            return preprocess_none
         case "default":
             return preprocess_image
 
@@ -29,22 +26,19 @@ def match(
         query_image, 
         query_filename, 
         test_images, 
-        nfeatures=1000,
         estimator=cv2.USAC_MAGSAC, 
+        fixed_nf=False,
+        nfeatures=1000,
         preprocess_img="default",
-        filter_outlier=True,
-        fixed_nf=False
         ):
+
     # Hyperparameter Optimization
     if fixed_nf == False:
-        nfeatures = optimize_nfeatures(query_image, query_filename, test_images, estimator, preprocess_image_method(preprocess_img), filter_outlier, fixed_nf)
+        nfeatures = optimize_nfeatures(query_image, query_filename, test_images, preprocess_image_method(preprocess_img))
         # print("optimal nfeatures:", nfeatures)
     
-    # TESTING: Main modified ORB algorithm
-    matches_info, visualize_and_save_matches = find_matches(query_image, query_filename, test_images, nfeatures, estimator, preprocess_image_method(preprocess_img), filter_outlier, fixed_nf)
+    matches_info, visualize_and_save_matches = find_matches(query_image, query_filename, test_images, nfeatures, estimator, preprocess_image_method(preprocess_img))
 
-    # Main modified ORB algorithm
-    # matches_info, visualize_and_save_matches = orflansac.find_matches(query_image, query_filename, test_images, nfeatures, estimator, preprocess_image_method(preprocess_img))
     return (matches_info, visualize_and_save_matches)
 
 # Function for saving the matched images to local folder

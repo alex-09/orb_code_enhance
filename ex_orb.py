@@ -1,5 +1,3 @@
-# Estacio-Laurente ORB algorithm
-
 import cv2 
 import time
 
@@ -101,7 +99,10 @@ def ex_orb(
                 query_filename, 
                 test_filename
                 ))
+            
+            # print("EXORB",query_filename, test_filename)
     
+
     # end time for time complexity
     end_time = time.time()
     sec_end_time = time.ctime(end_time)

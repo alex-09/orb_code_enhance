@@ -58,12 +58,6 @@ def preprocess_image(image):
     return combined_edges_clahe
 
 def preprocess_image_estacio_laurente(image):
-    scale_percent = 100
-    width = int(image.shape[1] * scale_percent / 100)
-    height = int(image.shape[0] * scale_percent / 100)
-    dim = (width, height)
-    image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
-
     # Convert to Grayscale (for dimensionality reduction)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -71,8 +65,3 @@ def preprocess_image_estacio_laurente(image):
     clahe_apply = clahe.apply(gray)
 
     return clahe_apply
-
-def preprocess_none(image):
-    # Convert to Grayscale (for dimensionality reduction)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    return image

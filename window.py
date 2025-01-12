@@ -6,7 +6,6 @@ from PyQt6.QtCore import QCoreApplication, Qt
 from ex_orb import ex_orb
 from fileio import load_images_from_folder
 import match as mod_orb
-import numpy as np
 
 class ImageApp(QWidget):
     def __init__(self):
@@ -34,19 +33,12 @@ class ImageApp(QWidget):
         # Image display label
         self.layout_image = QHBoxLayout()
 
-        self.image_label = QLabel("Upload an image")
-        self.image_label_matched = QLabel("")
+        self.image_label = QLabel("No Image Loaded")
+        self.image_label2 = QLabel("No Image Loaded")
         self.layout_image.addWidget(self.image_label)
-        self.layout_image.addWidget(self.image_label_matched)
+        self.layout_image.addWidget(self.image_label2)
 
         self.layout.addLayout(self.layout_image)
-
-        # Section for result of image
-        self.layout_result_img = QVBoxLayout()
-
-        self.image_label_result = QLabel("RESULT IMAGE")
-        self.layout_result_img.addWidget(self.image_label_result)
-        self.layout.addLayout(self.layout_result_img)   
 
         # Display bottom buttons
         self.layout_bottom_btns = QHBoxLayout()
@@ -88,7 +80,7 @@ class ImageApp(QWidget):
         if file_name:
             self.image_path = file_name[0]
             self.image_label.clear()
-            self.image_label_matched.clear()
+            self.image_label2.clear()
 
             self.display_image()
             
@@ -97,7 +89,7 @@ class ImageApp(QWidget):
 
     def display_image(self):
         self.image_label.clear()
-        self.image_label_matched.clear()
+        self.image_label2.clear()
 
         if self.image_path:
             # Read and convert the image using OpenCV
@@ -131,7 +123,6 @@ class ImageApp(QWidget):
         query_image = cv2.imread(image_path)
         query_filename = image_path
         test_imgs = load_images_from_folder(r"C:\Users\johnl\Codes\ORBv2\test")
-        self.results = r"C:\Users\johnl\Codes\ORBv2\results"
 
         matches, visuals = ex_orb(
             query_image=query_image, 
@@ -161,27 +152,7 @@ class ImageApp(QWidget):
         bytes_per_line = channel * width
         q_image = QImage(image.data, width, height, bytes_per_line, QImage.Format.Format_RGB888)
 
-        # self.image_label_matched.setPixmap(QPixmap.fromImage(q_image).scaled(700, 300, Qt.AspectRatioMode.KeepAspectRatio))
-
-        # concatenate an image below the self.image_label_matched with another image
-        mod_orb.save(visuals)
-        q_imgs= []
-        for v in visuals:
-            # Read and convert the image using OpenCV
-            image = cv2.imread(f"C:/Users/johnl/Codes/ORBv2/results/matched_img_{v[6]}")
-            if image is not None:
-                # Convert BGR to RGB format for displaying in PyQt
-                image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-                height, width, channel = image.shape
-                bytes_per_line = channel * width
-                q_image = QImage(image.data, width, height, bytes_per_line, QImage.Format.Format_RGB888)
-                q_imgs.append(q_image)
-
-        qq = None
-        for q in q_imgs:
-            #Combine images q in a QpixMap and set it to self.image_label_result
-            qq = QPixmap.fromImage(q).scaled(700, 300, Qt.AspectRatioMode.KeepAspectRatio)
-        self.image_label_result.setPixmap(qq)
+        self.image_label2.setPixmap(QPixmap.fromImage(q_image).scaled(700, 300, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
 
     
     def run_mod_orb(self):
@@ -230,7 +201,7 @@ class ImageApp(QWidget):
         bytes_per_line = channel * width
         q_image = QImage(image.data, width, height, bytes_per_line, QImage.Format.Format_RGB888)
 
-        self.image_label_matched.setPixmap(QPixmap.fromImage(q_image).scaled(700, 300, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        self.image_label2.setPixmap(QPixmap.fromImage(q_image).scaled(700, 300, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
 
     def save_results(self):
         
