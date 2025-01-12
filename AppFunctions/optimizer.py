@@ -6,10 +6,6 @@ import amadeo_bautista_lingad
 from bayes_opt import BayesianOptimization, UtilityFunction
 from sklearn.gaussian_process.kernels import Matern
 
-<<<<<<< HEAD
-<<<<<<< HEAD:AppFunctions/optimizer.py
-=======
->>>>>>> 0dd00ffea91e1cd1b3f9bfc41ea4fdd3ce8098c7
 # # Know the version of Bayes_Opt
 # import bayes_opt
 # print("Bayes Opt Version", bayes_opt.__version__)
