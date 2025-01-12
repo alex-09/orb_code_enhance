@@ -6,7 +6,10 @@ import amadeo_bautista_lingad
 from bayes_opt import BayesianOptimization, UtilityFunction
 from sklearn.gaussian_process.kernels import Matern
 
+<<<<<<< HEAD
 <<<<<<< HEAD:AppFunctions/optimizer.py
+=======
+>>>>>>> 0dd00ffea91e1cd1b3f9bfc41ea4fdd3ce8098c7
 # # Know the version of Bayes_Opt
 # import bayes_opt
 # print("Bayes Opt Version", bayes_opt.__version__)
@@ -15,11 +18,6 @@ def optimize_nfeatures(query_image, query_filename, test_images, estimator, prep
     def objective(nfeatures):
         matches_info, _ = amadeo_bautista_lingad.find_matches(query_image, query_filename, test_images, nfeatures, estimator, preprocess_img)
         
-=======
-def optimize_nfeatures(query_image, query_filename, test_images, preprocess_image_base):
-    def objective(nfeatures):
-        matches_info = find_matches(query_image, query_filename, test_images, nfeatures, estimator=cv2.USAC_MAGSAC, preprocess_image=preprocess_image_base)
->>>>>>> parent of 4f18aee (Changes noted in README.md [11-17-2024]):optimizer.py
         if matches_info and len(matches_info[0]) > 0:
             _, _, inliers_count, _, total_matches = matches_info[0] # NOTE: matches_info[0][0] = (query_filename, test_filename, inliers_count, nfeatures, total matches)
             return (inliers_count/total_matches) * 100 # the good matches percentage (GMP)
