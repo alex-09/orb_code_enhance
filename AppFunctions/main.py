@@ -10,8 +10,8 @@ load_images_from_folder('local_folder_path')
 '''
 
 # Load set of query and test images
-query_imgs = load_images_from_folder('AppFunctions/query')
-test_imgs = load_images_from_folder('AppFunctions/test')
+query_imgs = load_images_from_folder('query')
+test_imgs = load_images_from_folder('test')
 
 # manually get the query image file name and set it to query to set the query image
 # query = 'IMG_6845_jpeg.rf.ecd3c9b41e8cf9e0302536cbdbe1d11e.jpg'

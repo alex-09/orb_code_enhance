@@ -1,6 +1,6 @@
 
-# For TestCases: Just a quick note
-1. (unstable) The `main.py` in TestCases is where we will conduct the tests.
+# For Comparisons
+1. This is the main code to compare different algorithms
 
 # For AppFunctions
 1. The main.py will give you an idea on how to use the AMADEO-BAUTISTA-LINGAD ORB algorithm.

@@ -2,6 +2,8 @@ import os
 import cv2
 import numpy as np
 
+os.chdir('./AppFunctions')
+
 def load_images_from_folder(folder):
     images = []
     try:
@@ -46,6 +48,6 @@ def visualize_and_save_matches(query_image, test_image, kp_query, kp_test, match
         cv2.circle(combined_image, end_point, 5, (0, 0, 255), -1)
     
     # Save the image comparison
-    save_path = f"AppFunctions/match_results/matched_img_{test_filename}"
+    save_path = f"./match_results/matched_img_{test_filename}"
     res = cv2.imwrite(save_path, combined_image)
     print(res, '\n', save_path)

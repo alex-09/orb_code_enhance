@@ -6,8 +6,8 @@ import cv2
 from bayes_opt import BayesianOptimization, UtilityFunction
 from sklearn.gaussian_process.kernels import Matern
 
-import bayes_opt
-print("Bayes Opt Version", bayes_opt.__version__)
+# import bayes_opt
+# print("Bayes Opt Version:", bayes_opt.__version__)
 
 def optimize_nfeatures(query_image, query_filename, test_images, estimator, preprocess_img, filter_outlier, fixed_nf, algo_name):
     def objective(nfeatures):

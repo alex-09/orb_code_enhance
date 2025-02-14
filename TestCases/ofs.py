@@ -189,7 +189,7 @@ def find_matches(
             '''
 
             # Pre-defined threshold for min. number of inliers to accept as a match: x
-            if len(inlier_matches) > 4:
+            if len(inlier_matches):
                 # These are the final lists of matches and matches data to be returned
                 matches_info.append((
                     query_filename, 

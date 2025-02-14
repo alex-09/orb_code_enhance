@@ -17,12 +17,14 @@ test_imgs = load_images_from_folder('test')
 # manually get the query image file name and set it to query to set the query image
 # query = 'IMG_6845_jpeg.rf.ecd3c9b41e8cf9e0302536cbdbe1d11e.jpg'
 # query_index = [query_imgs.index(i) for i in query_imgs if i[0] == query][0]
+# OR 
+# just get the index of the item for query
 query_index = 3
 query_filename = query_imgs[query_index][0]
 query_image = query_imgs[query_index][1]
 
 # Start testing the algorithm for comparing the MODIFIED and EXSITING ORB algorithm
-# Just uncomment the part with matches, visuals = ... code to start each test
+# Just uncomment the part with the code `matches, visuals = ...` to start each test
 # The scorings used for this simulation are 
 #   Total matches,
 #   Good matches,
@@ -33,11 +35,11 @@ AMADEO-BAUTISTA-LINGAD algorithm
 
 (ABL) Image Preprocessing + Bayesian Opt + ORB + FLANN + (MAGSAC++)
 # '''
-matches, visuals = match.match(
-    query_image=query_image, 
-    query_filename=query_filename, 
-    test_images=test_imgs
-    ) 
+# matches, visuals = match.match(
+#     query_image=query_image, 
+#     query_filename=query_filename, 
+#     test_images=test_imgs
+#     ) 
 
 '''
 TEST 2
@@ -103,12 +105,14 @@ Fixed Nfeatures (1000) + CLAHE + ORB + FLANN
 #     filter_outlier=False,
 #     algo_name="ex_orb"
 #     ) 
-# matches, visuals = ex_orb(query_image, query_filename, test_imgs, 1000)
+#
+#  OR
+#
+matches, visuals = ex_orb(query_image, query_filename, test_imgs, 1000)
 
 #############################################
 # Save the matched images to local folder
-match.save(visuals)
-
+# match.save(visuals)
 
 for matched in matches:
     total_matches = matched[4]

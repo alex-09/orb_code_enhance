@@ -36,13 +36,13 @@ def match(
         fixed_nf=False,
         algo_name="default"
         ):
+    
     # Hyperparameter Optimization
     if fixed_nf == False:
         # nfeatures=1000
         nfeatures = optimize_nfeatures(query_image, query_filename, test_images, estimator, preprocess_image_method(preprocess_img), filter_outlier, fixed_nf, algo_name)
         # print("optimal nfeatures:", nfeatures)
     
-    print("Nfeat:", nfeatures)
     # TESTING: Main modified ORB algorithm
     matches_info, visualize_and_save_matches = find_matches(query_image, query_filename, test_images, nfeatures, estimator, preprocess_image_method(preprocess_img), filter_outlier, fixed_nf, algo_name)
 

@@ -1,8 +1,5 @@
 # Estacio-Laurente ORB algorithm
-
-import cv2 
-import time
-import numpy as np
+import cv2
 
 def ex_orb(
         query_image, 
@@ -10,8 +7,6 @@ def ex_orb(
         test_images, 
         nfeatures
         ):
-    # start time for time_complexity
-    start_time = time.time()
 
     # Array to store the final matches that will be RETURNED by this function
     matches_info = []
@@ -22,15 +17,13 @@ def ex_orb(
     # img2 = cv2.imread("test/test_creamo_mult.jpg", 2)
 
     image_orig = query_image
-    image = cv2.imread(query_filename, 2)
-    
+    image = cv2.imread("query/"+query_filename, 2)
     
     img2_orig = None
 
     for test_filename, img2 in test_images:
         img2_orig = img2
         img2 = cv2.imread("test/"+test_filename, 2)
-
         # resizing img1
         scale_percent = 100
         width = int(image.shape[1] * scale_percent / 100)
@@ -43,8 +36,6 @@ def ex_orb(
         height = int(img2.shape[0] * scale_percent / 100)
         dim = (width, height)
         img2 = cv2.resize(img2, dim, interpolation = cv2.INTER_AREA)
-
-        
 
         #enhance contrast using adaptive histogram equalization
         clahe = cv2.createCLAHE(clipLimit=4.0, tileGridSize=(8, 8))
@@ -104,14 +95,6 @@ def ex_orb(
                 query_filename, 
                 test_filename
                 ))
-    
-    # end time for time complexity
-    end_time = time.time()
-    sec_end_time = time.ctime(end_time)
-    sec_start_time = time.ctime(start_time)
-
-    # Total runtime of Estacio-Laurente ORB Algorithm
-    total_runtime = f"Run-time: {end_time - start_time} secs"
 
     return (matches_info, visualize_and_save_matches)
     
