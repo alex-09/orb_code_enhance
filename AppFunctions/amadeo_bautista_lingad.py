@@ -26,32 +26,18 @@ def find_matches(
         estimator,
         preprocess_image
         ):
-    
-    #synthetic noisezz
-    # Generate Gaussian noise
-    # noise = np.random.normal(0.001, 1, query_image.shape).astype(np.uint8)
-    # # Add the noise to the original image
-    # query_image = cv2.add(query_image, noise)
-    # query_image= cv2.GaussianBlur(query_image, (5, 5), 0)
-    # beta = max(-255, min(255, -5))
-    # # Adjust brightness
-    # query_image = cv2.convertScaleAbs(query_image, alpha=1, beta=beta)
 
     query_image_original =  query_image
 
     # Array to store the final matches that will be RETURNED by this (find_matches) function
     matches_info = []
 
-    # Structure is for testing: Image preprocessing
-    #   We separated the initiation of image preprocessing 
-    #   because of different image encoding.
-    #   For Est-Lau ORB they used imread(, 2) to grayscale the image and 
-    #   for ORFLANSAC we used imread(, 0) then convert to BGR2GRAY to grayscale the image
+    # Image preprocessing
     query_image = preprocess_image(query_image)
 
     # ORB instantiation
     orb = cv2.ORB_create(nfeatures=int(nfeatures), scoreType=cv2.ORB_HARRIS_SCORE, fastThreshold=20, edgeThreshold=10)
-
+    # Detect keypoints and compute descriptors
     kp_query, des_query = orb.detectAndCompute(query_image, None)
     
     # FLANN matcher instantiation
@@ -67,10 +53,13 @@ def find_matches(
     for test_filename, test_image in test_images:
         test_image_original = test_image
 
-        # Testing: Image prprocessing of test image
+        # Image prprocessing of test image
         test_image = preprocess_image(test_image)
-        
+
+        # Detect keypoints and compute descriptors
         kp_test, des_test = orb.detectAndCompute(test_image, None)
+
+        # Match keypoints through FLANN
         matches = flann.knnMatch(des_query, des_test, k=2)
 
         # Need to draw only good matches, so create a mask
@@ -85,9 +74,8 @@ def find_matches(
                     good_matches.append(m)
 
         # If filtered matches are at least greater than 10, then use MAGSAC++ to get inliers (or accurate matches)
-        if len(good_matches) > 10:
+        if len(good_matches) >= 10:
             inlier_matches=[]
-            outlier_matches=[]
   
             # Convert keypoints to numpy arrays
             src_pts = np.float32([kp_query[m.queryIdx].pt for m in good_matches]).reshape(-1, 1, 2)
@@ -99,47 +87,9 @@ def find_matches(
 
             # Filter good matches based on inliers. Only keep good matches with x or more inliers
             inlier_matches = [good_matches[i] for i in range(len(good_matches)) if inliers[i]==True] # code is shortened through using list comprehensions
-        
-            outlier_matches = [good_matches[i] for i in range(len(good_matches)) if inliers[i]==False]
 
-
-            # START: FOR TESTING: This section is for visualizing the inliers and outliers 
-            # Create a new image to draw matches
-            # draw_img = np.hstack((query_image_original, test_image_original))  # Combine images side by side
-
-            # # Iterate over matches to draw inliers and outliers
-            # for i in range(len(good_matches)):
-            #     pt1 = tuple(np.round(kp_query[good_matches[i].queryIdx].pt).astype(int))
-            #     pt2 = tuple(np.round(kp_test[good_matches[i].trainIdx].pt).astype(int))
-
-            #     # Adjust point positions for combined image
-            #     pt2_adjusted = (pt2[0] + query_image_original.shape[1], pt2[1])  # Shift pt2 to the right
-
-            #     if mask[i]:  # Inlier
-            #         color = (0, 255, 0)  # green for inliers
-                    
-            #         # Draw line for inliers
-            #         color_line = (100, 0, 100)
-            #         cv2.line(draw_img, pt1, pt2_adjusted, color_line, 1)
-
-            #         # Draw points for inliers
-            #         cv2.circle(draw_img, pt1, 3, color, -1)     # Point in img1
-            #         cv2.circle(draw_img, pt2_adjusted, 3, color, -1)  # Point in img2
-            #     else:  # Outlier
-            #         color = (0, 0, 255)  # Red for outliers
-            #         # Draw points for outliers
-            #         cv2.circle(draw_img, pt1, 3, color, -1)     # Point in img1
-            #         cv2.circle(draw_img, pt2_adjusted, 3, color, -1)  # Point in img2
-
-            # test_window_title = f"[Nfeatures = {str(nfeatures)}] [Inlier Matches = {str(len(inlier_matches))}] [Outliers = {str(len(outlier_matches))}]"
-            # cv2.imshow(test_window_title, draw_img)
-            # cv2.waitKey(0)
-            # END: FOR TESTING: This section if for visualizing the inliers and outliers 
-
-            gmp = (len(inlier_matches)/len(good_matches)) * 100
-
-            # Pre-defined threshold for min. number of inliers to accept as a match: GMP of 20%
-            if gmp >= 20:
+            # Pre-defined threshold for min. number of inliers to accept as a match: GMP of 10%
+            if len(inlier_matches) >= 10:
                 # These are the final lists of matches and matches data to be returned
                 matches_info.append((
                     query_filename, 

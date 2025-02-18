@@ -5,6 +5,7 @@ from orb import orb_simulate
 from orb_bf import orb_bf_simulate
 from sift import sift_simulate
 from sift_bf import sift_bf_simulate
+from akaze_bf import akaze_bf_simulate
 from datetime import datetime
 from create_csv import create_csv
 
@@ -33,11 +34,11 @@ for img in query_imgs:
     # query_filename = img[0]
 
     # ALGO 1: AMA-BAU-LIN
-    matches, visuals = match.match(
-        query_image=img[1], 
-        query_filename=img[0], 
-        test_images=test_imgs 
-    ) 
+    # matches, visuals = match.match(
+    #     query_image=img[1], 
+    #     query_filename=img[0], 
+    #     test_images=test_imgs 
+    # ) 
 
     # ALGO 2: EST-LAU
     # matches, visuals = ex_orb(
@@ -78,6 +79,14 @@ for img in query_imgs:
     #     test_images=test_imgs,
     #     nfeatures=500
     # )
+
+    # ALGO 4: AKAZE + BF
+    matches, visuals = akaze_bf_simulate(
+        query_image=img[1], 
+        query_filename=img[0], 
+        test_images=test_imgs,
+        nfeatures=500
+    )
 
     create_csv(matches_info=matches)
 
