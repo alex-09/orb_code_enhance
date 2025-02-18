@@ -16,7 +16,7 @@ def optimize_nfeatures(query_image, query_filename, test_images, estimator, prep
         
         if matches_info and len(matches_info[0]) > 0:
             _, _, inliers_count, _, total_matches = matches_info[0] # NOTE: matches_info[0][0] = (query_filename, test_filename, inliers_count, nfeatures, total matches)
-            return (inliers_count/total_matches) * 100 # the good matches percentage (GMP)
+            return inliers_count
         else:
             return 0
 

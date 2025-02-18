@@ -18,13 +18,18 @@ OPTION 1: Getting query_index by image file name
     - get the image file name and set it as the value for query_filename
     - the query_index will automatically get the image of the corresponding query_filename
 '''
-# query_filename = 'IMG_6845_jpeg.rf.ecd3c9b41e8cf9e0302536cbdbe1d11e.jpg'
-# query_index = [query_imgs.index(i) for i in query_imgs if i[0] == query][0]
+# query_filename = '3_jpg.rf.94d9ab2eaa0317a98811b86102626650.jpg'
+# try:
+#     query_index = [query_imgs.index(i) for i in query_imgs if i[0] == query_filename][0]
+# except IndexError:
+#     print(f'Image not in the list of query images with size of {len(query_imgs)}')
+#     import sys
+#     sys.exit() #exit the program if the query_filename is not in the list of query images
 '''
 OPTION 2: Getting query_index by the exact index of the image
     - set the index of the image you want as query image and set it to query_index variable
 '''
-query_index = 3
+query_index = 2
 
 
 '''

@@ -50,4 +50,4 @@ def visualize_and_save_matches(query_image, test_image, kp_query, kp_test, match
     # Save the image comparison
     save_path = f"./match_results/matched_img_{test_filename}"
     res = cv2.imwrite(save_path, combined_image)
-    print(res, '\n', save_path)
+    # print(res, '\n', save_path)

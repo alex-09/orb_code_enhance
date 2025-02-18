@@ -25,8 +25,7 @@ def match(
     '''
 
     # Hyperparameter Optimization
-    nfeatures = 56946 # Use this value for practical application. It is the average of nfeatures values obtained from the images
-    # nfeatures = optimize_nfeatures(query_image, query_filename, test_images, estimator, preprocess_image)
+    nfeatures = optimize_nfeatures(query_image, query_filename, test_images, estimator, preprocess_image)
     
     # Find matches using AMADEO-BAUTISTA-LINGAD ORB algorithm
     matches_info, visualize_and_save_matches = amadeo_bautista_lingad.find_matches(query_image, query_filename, test_images, nfeatures, estimator, preprocess_image)

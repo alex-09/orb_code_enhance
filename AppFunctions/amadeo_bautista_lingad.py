@@ -70,11 +70,11 @@ def find_matches(
         for match in matches:
             if len(match) == 2 and match[1].distance != 0:
                 m, n = match
-                if m.distance/n.distance < 0.75: # 25% closer points are considered as good matches
+                if m.distance/n.distance < 0.7: # 30% closer points are considered as good matches
                     good_matches.append(m)
 
         # If filtered matches are at least greater than 10, then use MAGSAC++ to get inliers (or accurate matches)
-        if len(good_matches) >= 10:
+        if len(good_matches) > 10:
             inlier_matches=[]
   
             # Convert keypoints to numpy arrays
@@ -82,14 +82,14 @@ def find_matches(
             dst_pts = np.float32([kp_test[m.trainIdx].pt for m in good_matches]).reshape(-1, 1, 2)
             
             # Find inliers using RANSAC (the model used is homography)
-            _, mask = cv2.findHomography(src_pts, dst_pts, estimator, ransacReprojThreshold=10, maxIters=100)
+            _, mask = cv2.findHomography(src_pts, dst_pts, estimator, ransacReprojThreshold=3)
             inliers = mask.ravel().tolist() # returns a 1D array of inliers with value 1 while the outliers have value of 0
 
             # Filter good matches based on inliers. Only keep good matches with x or more inliers
             inlier_matches = [good_matches[i] for i in range(len(good_matches)) if inliers[i]==True] # code is shortened through using list comprehensions
 
-            # Pre-defined threshold for min. number of inliers to accept as a match: GMP of 10%
-            if len(inlier_matches) >= 10:
+            # Pre-defined threshold for min. number of inliers to accept as a match: inliers >= 10
+            if len(inlier_matches) > 10:
                 # These are the final lists of matches and matches data to be returned
                 matches_info.append((
                     query_filename, 
