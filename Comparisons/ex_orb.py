@@ -67,21 +67,30 @@ def ex_orb(
                     matchesMask[index] = [1, 0]
                     good_matches.append(m)
 
+        bad_matches = []
+        # FOR LABELING in paper: show the outliers 
+        for index in range(len(matches)):
+            if len(matches[index]) == 2:
+                m, n = matches[index]
+                if m.distance < 0.75 * n.distance: # threshold of ratio testing
+                    continue
+                bad_matches.append(m)
+
         # function to prepare and draw the matches
-        draw_params = dict( 
-                        matchesMask = matchesMask,
-                        flags = 2)
-        match_result = cv2.drawMatchesKnn(image,kp1,img2,kp2,matches,None,**draw_params)
+        # draw_params = dict( 
+        #                 matchesMask = matchesMask,
+        #                 flags = 2)
+        # match_result = cv2.drawMatchesKnn(image,kp1,img2,kp2,matches,None,**draw_params)
 
         # function to prepare and draw the keypoints
-        keyp_draw_original = cv2.drawKeypoints(image, kp1, None)
-        keyp_draw2 = cv2.drawKeypoints(img2, kp2, None)
+        # keyp_draw_original = cv2.drawKeypoints(image, kp1, None)
+        # keyp_draw2 = cv2.drawKeypoints(img2, kp2, None)
 
         # Pre-defined threshold for min. number of inliers to accept as a match: 30
-        if len(good_matches) > 0:
+        if len(good_matches) >= 0:
             # These are the final lists of matches and matches data to be returned
             matches_info.append((
-                # query_filename, test_filename, inliers_count, nfeatures, total_matches_without_filter, query_feature, test_feature, low_good_matches
+                # query_filename, test_filename, inliers_count, nfeatures, total_matches_without_filter, query_feature, test_feature, lowe_good_matches
                 query_filename, 
                 test_filename, 
                 len(good_matches), 
@@ -97,7 +106,9 @@ def ex_orb(
                 kp1, kp2, 
                 good_matches, 
                 query_filename, 
-                test_filename
+                test_filename,
+                bad_matches,
+                len(matches)
                 ))
 
     return (matches_info, visualize_and_save_matches)

@@ -6,7 +6,7 @@ from bayes_opt import BayesianOptimization, UtilityFunction
 # from sklearn.gaussian_process.kernels import Matern
 
 # CHECK VERSION
-# import bayes_opt
+import bayes_opt
 # print("Bayes Opt Version:", bayes_opt.__version__)
 
 def optimize_nfeatures(query_image, query_filename, test_images, estimator, preprocess_img):
@@ -22,7 +22,7 @@ def optimize_nfeatures(query_image, query_filename, test_images, estimator, prep
 
     optimizer = BayesianOptimization(
         f=objective,
-        pbounds={"nfeatures": (500, 100000)},
+        pbounds={"nfeatures": (1000, 50000)},
         random_state=1,
         verbose=0
     )
