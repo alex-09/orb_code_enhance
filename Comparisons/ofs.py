@@ -133,12 +133,12 @@ def find_matches(
             
             try:
                 # Find inliers using RANSAC (the model used is homography)
-                _, mask = cv2.findHomography(src_pts, dst_pts, estimator )
+                _, mask = cv2.findHomography(src_pts, dst_pts, estimator, ransacReprojThreshold=10, maxIters=100)
 
                 inliers = mask.ravel().tolist() # returns a 1D array of inliers with value 1 while the outliers have value of 0
 
                 # Filter good matches based on inliers. Only keep good matches with x or more inliers
-                inlier_matches = [good_matches[i] for i in range(len(good_matches)) if inliers[i]==False] # code is shortened through using list comprehensions
+                inlier_matches = [good_matches[i] for i in range(len(good_matches)) if inliers[i]==True] # code is shortened through using list comprehensions
                 num_good_matches = len(inlier_matches)
             except:
                 print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")

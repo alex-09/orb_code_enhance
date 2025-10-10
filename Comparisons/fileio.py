@@ -60,30 +60,29 @@ def visualize_and_save_matches(query_image, test_image, kp_query, kp_test, match
         
         start_point = (int(query_pt[0]), int(query_pt[1]))
         end_point = (int(test_pt[0] + query_image.shape[1]), int(test_pt[1])) 
-        cv2.line(combined_image, start_point, end_point, (0, 255, 0), 1)
 
         # Draw circles in pink
         cv2.circle(combined_image, start_point, 4, (255, 0, 255), -1) 
         cv2.circle(combined_image, end_point, 4, (255, 0, 255), -1) 
 
     # Draw matches
-    # for match in matches:
-    #     # print(match)
-    #     query_idx = match.queryIdx # Get the set of indexes of the query keypoint
-    #     test_idx = match.trainIdx # Get the set of indexes of the test keypoint
-    #     query_pt = kp_query[query_idx].pt # Get the coordinates of the query keypoint
-    #     test_pt = kp_test[test_idx].pt # Get the coordinates of the test keypoint
-    #     start_point = (int(query_pt[0]), int(query_pt[1]))
-    #     end_point = (int(test_pt[0] + query_image.shape[1]), int(test_pt[1]))  # Shift x coordinate for test image
-    #     cv2.line(combined_image, start_point, end_point, (0, 255, 0), 1)
+    for match in matches:
+        # print(match)
+        query_idx = match.queryIdx # Get the set of indexes of the query keypoint
+        test_idx = match.trainIdx # Get the set of indexes of the test keypoint
+        query_pt = kp_query[query_idx].pt # Get the coordinates of the query keypoint
+        test_pt = kp_test[test_idx].pt # Get the coordinates of the test keypoint
+        start_point = (int(query_pt[0]), int(query_pt[1]))
+        end_point = (int(test_pt[0] + query_image.shape[1]), int(test_pt[1]))  # Shift x coordinate for test image
+        cv2.line(combined_image, start_point, end_point, (0, 255, 0), 1)
 
-    #     # inlier colors - cyan
-    #     cv2.circle(combined_image, start_point, 5, (0, 255, 0), -1)
-    #     cv2.circle(combined_image, end_point, 5, (0, 255, 0), -1)
+        # inlier colors - cyan
+        cv2.circle(combined_image, start_point, 5, (0, 255, 0), -1)
+        cv2.circle(combined_image, end_point, 5, (0, 255, 0), -1)
 
-    #     # outlier colors - red
-    #     # cv2.circle(combined_image, start_point, 3, (0, 0, 255), -1)
-    #     # cv2.circle(combined_image, end_point, 3, (0, 0, 255), -1)
+        # outlier colors - red
+        # cv2.circle(combined_image, start_point, 3, (0, 0, 255), -1)
+        # cv2.circle(combined_image, end_point, 3, (0, 0, 255), -1)
 
     # --- 4. Add Text Label to the White Area ---
     label_text = f"inliers: {len(matches)} | outliers: {len(bad_matches)} | match percentage: {round((len(matches)/total_matches)*100, 2)}% | total matches: {total_matches}"
