@@ -1,7 +1,8 @@
 from optimizer import optimize_nfeatures
 from ofs import find_matches
+# from ofs_reverse import find_matches
 from fileio import visualize_and_save_matches
-from preprocess import preprocess_image, preprocess_image_estacio_laurente, preprocess_none
+from preprocess import preprocess_image, preprocess_image_estacio_laurente, preprocess_none, preprocess_image_no_gaus, preprocess_image_no_canny
 import cv2
 
 def preprocess_image_method(method_name='default'):
@@ -48,4 +49,4 @@ def match(
 # Function for saving the matched images to local folder
 def save(visuals):
     for v in visuals:
-        visualize_and_save_matches(v[0], v[1], v[2], v[3], v[4], v[5], v[6])
+        visualize_and_save_matches(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8])

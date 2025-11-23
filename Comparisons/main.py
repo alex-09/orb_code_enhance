@@ -1,11 +1,18 @@
 from fileio import load_images_from_folder, visualize_and_save_matches
 import match          # AMA-BAU-LIN algorithm
 from ex_orb import ex_orb   # EST-LAU algorithm
-from orb import orb_simulate
-from orb_bf import orb_bf_simulate
-from sift import sift_simulate
-from sift_bf import sift_bf_simulate
-from akaze_bf import akaze_bf_simulate
+# from ex_orb_magsac import ex_orb   # EST-LAU algorithm w/ MAGSAC++
+# from orb import orb_simulate
+# from orb_magsac import orb_simulate
+# from orb_bf import orb_bf_simulate
+# from orb_bf_magsac import orb_bf_simulate
+# from orb_bf_magsac import orb_bf_simulate
+# from sift import sift_simulate
+# from sift_magsac import sift_simulate
+# from sift_bf import sift_bf_simulate
+# from sift_bf_magsac import sift_bf_simulate
+# from akaze_bf import akaze_bf_simulate
+# from akaze_bf_magsac import akaze_bf_simulate
 from datetime import datetime
 from create_csv import create_csv
 
@@ -34,11 +41,11 @@ for img in query_imgs:
     # query_filename = img[0]
 
     # ALGO 1: AMA-BAU-LIN
-    # matches, visuals = match.match(
-    #     query_image=img[1], 
-    #     query_filename=img[0], 
-    #     test_images=test_imgs 
-    # ) 
+    matches, visuals = match.match(
+        query_image=img[1], 
+        query_filename=img[0], 
+        test_images=test_imgs 
+    ) 
 
     # ALGO 2: EST-LAU
     # matches, visuals = ex_orb(
@@ -81,12 +88,12 @@ for img in query_imgs:
     # )
 
     # ALGO 4: AKAZE + BF
-    matches, visuals = akaze_bf_simulate(
-        query_image=img[1], 
-        query_filename=img[0], 
-        test_images=test_imgs,
-        nfeatures=500
-    )
+    # matches, visuals = akaze_bf_simulate(
+    #     query_image=img[1], 
+    #     query_filename=img[0], 
+    #     test_images=test_imgs,
+    #     nfeatures=500
+    # )
 
     create_csv(matches_info=matches)
 
@@ -94,7 +101,7 @@ for img in query_imgs:
     # Save the matched images to local folder
     match.save(visuals)
 
-    print("LENGTH OF TOTAL MATCHES:", len(matches))
+    print("LENGTH OF SIMiLAR MATCHES:", len(matches))
 
     for matched in matches:
         iterations += 1
@@ -116,7 +123,7 @@ for img in query_imgs:
         # print("=======================================================")
 
         # print("Total matches:\t\t", total_matches)
-        # print("Good matches:\t\t", good_matches)
+        print("Good matches:\t\t", good_matches)
         # print("Query Features:\t\t", query_features)
         # print("Test Features:\t\t", test_features)
         # print("Nfeatures:\t\t", nfeatures)
@@ -125,8 +132,8 @@ for img in query_imgs:
 
         avg_nfeatures += nfeatures
 
-avg_nfeatures = avg_nfeatures / 1500 # 1500 is the total number of iterations
-print("\nAverage Nfeatures:\t", avg_nfeatures)
+# avg_nfeatures = avg_nfeatures / 1500 # 1500 is the total number of iterations
+# print("\nAverage Nfeatures:\t", avg_nfeatures)
 
 now = datetime.now()
 print("Current time:", now)

@@ -28,6 +28,16 @@ def find_matches(
         )
     '''
 
+    # #synthetic noisezz
+    # # Generate Gaussian noise
+    # noise = np.random.normal(0.001, 1, query_image.shape).astype(np.uint8)
+    # # Add the noise to the original image
+    # query_image = cv2.add(query_image, noise)
+    # query_image= cv2.GaussianBlur(query_image, (5, 5), 0)
+    # beta = max(-255, min(255, -5))
+    # # Adjust brightness
+    # query_image = cv2.convertScaleAbs(query_image, alpha=1, beta=beta)
+
     # Save the original value of query_image
     query_image_original =  query_image
 
@@ -35,7 +45,7 @@ def find_matches(
     matches_info = []
 
     # Image Pre-processing
-    # query_image = preprocess_image(query_image)
+    query_image = preprocess_image(query_image)
 
     # ORB instantiation
     orb = cv2.ORB_create(nfeatures=int(nfeatures), scoreType=cv2.ORB_HARRIS_SCORE, fastThreshold=20, edgeThreshold=10)
@@ -43,7 +53,7 @@ def find_matches(
     # Get keypoints and descriptors of Query Image
     kp_query, des_query = orb.detectAndCompute(query_image, None)
 
-    print("LEN KP_Q:\t", len(kp_query))
+    # print("LEN KP_Q:\t", len(kp_query))
     
     # FLANN matcher instantiation
     FLANN_INDEX_LSH = 6
@@ -62,18 +72,28 @@ def find_matches(
         test_image_original = test_image
 
         # Image prprocessing of test image
-        # test_image = preprocess_image(test_image)
+        test_image = preprocess_image(test_image)
         
         # Get keypoints and descriptors of Test Image
         kp_test, des_test = orb.detectAndCompute(test_image, None)
 
-        print("LEN KP_T:\t", len(kp_test))
+        # LOG
+        # print("LEN KP_T:\t", len(kp_test))
         
         # Implement FLANN matcher
-        # DATA: matches => ((query_match1, test_match2),(query_match2_1, test_match2_2), ...)
+        # DATA: matches => ((query_match1, test_match2),(query_match2_1, test_match2_2), ...) => tuple
         matches = flann.knnMatch(des_query, des_test, k=2)
 
-        print("SIMILAR MATCHES", len(matches))
+        # LOG
+        # print("SIMILAR MATCHES length", len(matches))
+        # print("Data type of flann matches:", type(matches)) - tuple
+        # print("Data type of flann", type(flann)) - cv2.FlannBasedMatcher
+        # print("FLANN matches:\t", matches) # => ((Dmatch,), (Dmatch,))
+        matches_to_list = []
+        for match in matches:
+            for m in match:
+                matches_to_list.append(m)
+        # print("Matches to list length", len(matches_to_list))
 
         # Lowe's ratio test
         good_matches = []
@@ -82,6 +102,23 @@ def find_matches(
                 m, n = match
                 if m.distance/n.distance < 0.75:    # if 0.75 (threshold) is to be changed, the closer to 0, the better and stricter.
                     good_matches.append(m)          # DATA: good_matches  => [desc_match1, desc_match2_1, ...]
+
+        bad_matches = []
+        for match in matches:
+            if len(match) == 2 and match[1].distance != 0:
+                m, n = match
+                if m.distance/n.distance < 0.75:    # if 0.75 (threshold) is to be changed, the closer to 0, the better and stricter.
+                    continue
+                bad_matches.append(m)          # DATA: good_matches  => [desc_match1, desc_match2_1, ...]
+
+        # LOG
+        # print("Data type of ratio test matches:", type(good_matches)) - list
+        # print("GOOD MATCHES:\t", good_matches)
+        # print("FLANN matches:\t", matches)
+
+        # UNCOMMENT THIS TO DISREGARD LOWE'S RATIO TEST
+        # matches = flann.knnMatch(des_query, des_test, k=1)
+        # good_matches = matches_to_list
 
         # If filtered matches are at least greater than X, then use MAGSAC++ to get inliers (or accurate matches)
         if len(good_matches) >= 0:
@@ -137,7 +174,9 @@ def find_matches(
                     kp_query, kp_test, 
                     inlier_matches, 
                     test_filename,
-                    query_filename
+                    query_filename,
+                    bad_matches,
+                    num_total_matches, # or first_good_matches or num_total_matches
                     ))
 
     return (matches_info, visualize_and_save_matches)

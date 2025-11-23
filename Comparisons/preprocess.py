@@ -22,6 +22,30 @@ def preprocess_image(image):
     combined_edges_clahe = cv2.addWeighted(clahe_apply, 0.8, edges, 0.1, 0.8)
     return combined_edges_clahe
 
+def preprocess_image_no_gaus(image):
+    # Convert to Grayscale (for dimensionality reduction)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Apply CLAHE for contrast enhancement
+    clahe = cv2.createCLAHE(clipLimit=10.0, tileGridSize=(4, 4))
+    clahe_apply = clahe.apply(gray)
+    # Apply Canny Edge Detection (parameter adjusted to enhance contrast)
+    edges = cv2.Canny(clahe_apply, threshold1=100, threshold2=100)
+
+    combined_edges_clahe = cv2.addWeighted(clahe_apply, 0.8, edges, 0.1, 0.8)
+
+    return combined_edges_clahe
+
+def preprocess_image_no_canny(image):
+    # Convert to Grayscale (for dimensionality reduction)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # Apply Gaussian Blur (to reduce noise)
+    blurred_image = cv2.GaussianBlur(gray, (5, 5), 0)
+    # Apply CLAHE for contrast enhancement
+    clahe = cv2.createCLAHE(clipLimit=10.0, tileGridSize=(4, 4))
+    clahe_apply = clahe.apply(blurred_image)
+    return clahe_apply
+
 '''
 EST-LAU image preprocessing
 1. resize

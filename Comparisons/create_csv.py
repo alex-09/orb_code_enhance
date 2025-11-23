@@ -2,7 +2,7 @@ import csv
 import os
 
 
-def create_csv(matches_info, filename='file_ABL_no_img_enhancement.csv'):
+def create_csv(matches_info, filename='current_simulation.csv'):
     '''
     PARAMS: matches_info, filename.csv (or no value for default)
     '''
